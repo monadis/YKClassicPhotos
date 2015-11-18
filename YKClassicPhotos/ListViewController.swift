@@ -116,11 +116,12 @@ class ListViewController: UITableViewController,NSURLSessionDelegate {
 	}
 
 	func createOperations(photoDetails: PhotoRecord, indexPath: NSIndexPath) {
-		guard pendingOperations.downloadsInProgress[indexPath] == nil else {
+		guard pendingOperations.operationsInProgress[indexPath] == nil else {
 			return
 		}
 
 		let downloader = DownloadOperation(photoRecord: photoDetails)
+		downloader.queuePriority = .High
 		downloader.completionBlock = {
 			if downloader.cancelled {
 				return
@@ -129,7 +130,7 @@ class ListViewController: UITableViewController,NSURLSessionDelegate {
 				self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
 			})
 		}
-		pendingOperations.downloadsInProgress[indexPath] = downloader
+		pendingOperations.operationsInProgress[indexPath] = downloader
 
 
 		let filterer = FilterOperation(photoRecord: photoDetails)
@@ -138,7 +139,7 @@ class ListViewController: UITableViewController,NSURLSessionDelegate {
 				return
 			}
 			dispatch_async(dispatch_get_main_queue(), {
-				self.pendingOperations.downloadsInProgress.removeValueForKey(indexPath)
+				self.pendingOperations.operationsInProgress.removeValueForKey(indexPath)
 				self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
 			})
 		}
@@ -146,8 +147,8 @@ class ListViewController: UITableViewController,NSURLSessionDelegate {
 
 		filterer.addDependency(downloader)
 
-		pendingOperations.downloadQueue.addOperation(downloader)
-		pendingOperations.downloadQueue.addOperation(filterer)
+		pendingOperations.myOperationQueue.addOperation(downloader)
+		pendingOperations.myOperationQueue.addOperation(filterer)
 
 	}
 }
@@ -166,18 +167,18 @@ extension operationControlDuringScrolling {
 	}
 
 	func suspendAllOperations () {
-		pendingOperations.downloadQueue.suspended = true
+		pendingOperations.myOperationQueue.suspended = true
 	}
 
 	func resumeAllOperations () {
-		pendingOperations.downloadQueue.suspended = false
+		pendingOperations.myOperationQueue.suspended = false
 	}
 
 	func loadImagesForOnscreenCells () {
 		//1
 		if let pathsArray = tableView.indexPathsForVisibleRows {
 			//2
-			let allPendingOperations = Set(pendingOperations.downloadsInProgress.keys)
+			let allPendingOperations = Set(pendingOperations.operationsInProgress.keys)
 
 			//3
 			var toBeCancelled = allPendingOperations
@@ -190,10 +191,10 @@ extension operationControlDuringScrolling {
 
 			// 5
 			for indexPath in toBeCancelled {
-				if let pendingDownload = pendingOperations.downloadsInProgress[indexPath] {
+				if let pendingDownload = pendingOperations.operationsInProgress[indexPath] {
 					pendingDownload.cancel()
 				}
-				pendingOperations.downloadsInProgress.removeValueForKey(indexPath)
+				pendingOperations.operationsInProgress.removeValueForKey(indexPath)
 			}
 
 			// 6

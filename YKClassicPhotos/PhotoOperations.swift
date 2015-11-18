@@ -26,8 +26,8 @@ class PhotoRecord {
 }
 
 class PendingOperations {
-	lazy var downloadsInProgress = [NSIndexPath:NSOperation]()
-	lazy var downloadQueue:NSOperationQueue = {
+	lazy var operationsInProgress = [NSIndexPath:NSOperation]()
+	lazy var myOperationQueue:NSOperationQueue = {
 		var queue = NSOperationQueue()
 		queue.name = "Download queue"
 //		queue.maxConcurrentOperationCount = 1	// 테스트의 편의상 쓰레드는 한개로 제한한다. 실사용한다면 이 줄을 지우는게 퍼포먼스에 더 좋다.
