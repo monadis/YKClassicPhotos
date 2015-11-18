@@ -30,44 +30,39 @@ class PendingOperations {
 	lazy var downloadQueue:NSOperationQueue = {
 		var queue = NSOperationQueue()
 		queue.name = "Download queue"
-		queue.maxConcurrentOperationCount = 1	// 테스트의 편의상 쓰레드는 한개로 제한한다. 실사용한다면 이 줄을 지우는게 퍼포먼스에 더 좋다.
-		return queue
-	}()
-
-	lazy var filtrationsInProgress = [NSIndexPath:NSOperation]()
-	lazy var filtrationQueue:NSOperationQueue = {
-		var queue = NSOperationQueue()
-		queue.name = "Image Filtration queue"
-		queue.maxConcurrentOperationCount = 1	// 테스트의 편의상 쓰레드는 한개로 제한한다. 실사용한다면 이 줄을 지우는게 퍼포먼스에 더 좋다.
+//		queue.maxConcurrentOperationCount = 1	// 테스트의 편의상 쓰레드는 한개로 제한한다. 실사용한다면 이 줄을 지우는게 퍼포먼스에 더 좋다.
 		return queue
 	}()
 }
 
 
 class DownloadOperation: NSOperation {
-	//1
-	let photoRecord: PhotoRecord
 
-	//2
+	let photoRecord: PhotoRecord
+	
+
 	init(photoRecord: PhotoRecord) {
 		self.photoRecord = photoRecord
 	}
 
-	//3
+
 	override func main() {
-		//4
+		guard self.photoRecord.state == .New else {
+			return
+		}
+
 		if self.cancelled {
 			return
 		}
-		//5
+
 		let imageData = NSData(contentsOfURL:self.photoRecord.url)
 
-		//6
+
 		if self.cancelled {
 			return
 		}
 
-		//7
+
 		if imageData?.length > 0 {
 			self.photoRecord.image = UIImage(data:imageData!)
 			self.photoRecord.state = .Downloaded
@@ -89,6 +84,11 @@ class FilterOperation: NSOperation {
 	}
 
 	override func main () {
+
+		guard photoRecord.state == .Downloaded else {
+			return
+		}
+
 		if self.cancelled {
 			return
 		}
@@ -102,7 +102,6 @@ class FilterOperation: NSOperation {
 			self.photoRecord.state = .Filtered
 		}
 	}
-
 
 	func applySepiaFilter(image:UIImage) -> UIImage? {
 		let inputImage = CIImage(data:UIImagePNGRepresentation(image)!)

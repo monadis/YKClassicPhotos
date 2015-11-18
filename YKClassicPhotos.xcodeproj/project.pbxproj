@@ -24,6 +24,7 @@
 		5D9404D81BF364590061384D /* PhotoOperations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoOperations.swift; sourceTree = "<group>"; };
 		5D9404D91BF364590061384D /* ListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListViewController.swift; sourceTree = "<group>"; };
 		5D9404DC1BF3647B0061384D /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		5DD673EC1BF8D8DD005BAA99 /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +61,7 @@
 				5D9404DC1BF3647B0061384D /* AppDelegate.swift */,
 				5D9404D81BF364590061384D /* PhotoOperations.swift */,
 				5D9404D91BF364590061384D /* ListViewController.swift */,
+				5DD673EC1BF8D8DD005BAA99 /* MyPlayground.playground */,
 				5D9404CD1BF363BC0061384D /* Assets.xcassets */,
 				5D9404CF1BF363BC0061384D /* LaunchScreen.storyboard */,
 				5D9404D21BF363BC0061384D /* Info.plist */,
@@ -289,6 +291,7 @@
 				5D9404D71BF363BC0061384D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
